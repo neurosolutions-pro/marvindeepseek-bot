@@ -1,0 +1,7 @@
+deploy/marvindeepseek-bot/downloads/*
+!deploy/marvindeepseek-bot/downloads/.gitkeep
+deploy/marvindeepseek-bot/logs/*
+!deploy/marvindeepseek-bot/logs/.gitkeep
+deploy/marvindeepseek-bot/.venv/
+**/__pycache__/
+scripts/__pycache__/
