@@ -54,6 +54,29 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     if not text:
         return
 
+    # Follow-up inputs for /digest and /cursor_prompt when topic/task was empty.
+    if context.user_data.get("awaiting_digest_topic"):
+        context.user_data["awaiting_digest_topic"] = False
+        context.user_data["pending_digest_topic"] = text
+        from handlers.commands import _digest_keyboard
+
+        await update.message.reply_text(
+            f"Тема: {text}\nВыберите формат сводки:",
+            reply_markup=_digest_keyboard(),
+        )
+        return
+
+    if context.user_data.get("awaiting_cursor_task"):
+        context.user_data["awaiting_cursor_task"] = False
+        context.user_data["pending_cursor_task"] = text
+        from handlers.commands import _cursor_mode_keyboard
+
+        await update.message.reply_text(
+            f"Задача: {text}\nКак генерировать промт?",
+            reply_markup=_cursor_mode_keyboard(),
+        )
+        return
+
     # If waiting for legacy 1/2 choice, ignore — prefer inline buttons.
     if is_prompt_request(text):
         context.user_data["pending_prompt"] = text

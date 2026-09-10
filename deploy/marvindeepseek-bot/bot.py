@@ -26,12 +26,16 @@ from config import (
 )
 from handlers.commands import (
     cmd_clear,
+    cmd_cursor_prompt,
+    cmd_digest,
     cmd_file,
     cmd_help,
     cmd_memory,
     cmd_remember,
     cmd_start,
     cmd_status,
+    handle_cursor_mode_callback,
+    handle_digest_format_callback,
 )
 from handlers.files import handle_document, handle_photo
 from handlers.text import handle_prompt_format_callback, handle_text
@@ -102,11 +106,15 @@ def main() -> None:
     app.add_handler(CommandHandler("start", cmd_start))
     app.add_handler(CommandHandler("help", cmd_help))
     app.add_handler(CommandHandler("status", cmd_status))
+    app.add_handler(CommandHandler("digest", cmd_digest))
+    app.add_handler(CommandHandler("cursor_prompt", cmd_cursor_prompt))
     app.add_handler(CommandHandler("file", cmd_file))
     app.add_handler(CommandHandler("clear", cmd_clear))
     app.add_handler(CommandHandler("memory", cmd_memory))
     app.add_handler(CommandHandler("remember", cmd_remember))
     app.add_handler(CallbackQueryHandler(handle_prompt_format_callback, pattern=r"^prompt_fmt:"))
+    app.add_handler(CallbackQueryHandler(handle_digest_format_callback, pattern=r"^digest_fmt:"))
+    app.add_handler(CallbackQueryHandler(handle_cursor_mode_callback, pattern=r"^cursor_mode:"))
     app.add_handler(MessageHandler(filters.Document.ALL, handle_document))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
     app.add_handler(MessageHandler(filters.VOICE, handle_voice))

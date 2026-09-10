@@ -89,8 +89,10 @@ curl http://127.0.0.1:8082/health
 
 ## Команды
 
-- `/start` `/help` `/status` `/file`
+- `/start` `/help` `/status` `/digest` `/cursor_prompt` `/file`
 - `/status` — активная LLM и подключения (Hermes gateway, memory-mcp, DeepSeek)
+- `/digest <тема>` — сводка с выбором формата (короткий/отчёт/таблица/markdown/JSON)
+- `/cursor_prompt <задача>` — промт для Cursor (один большой или серия итераций)
 - `/clear` — очистить историю чата
 - `/memory` `/remember <факт>`
 

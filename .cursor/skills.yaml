@@ -1,0 +1,59 @@
+version: 1
+agent: marvin-research-digest-cursor
+llm:
+  provider: hermes
+  model: deepseek-chat
+  base_url: http://hermes:8000/v1
+privacy:
+  allow_new_external_apis: false
+  allowed_backends: [cursor, hermes, deepseek, memory-mcp]
+
+skills:
+  - id: web-research
+    description: Поиск и отбор источников под запрос
+    params:
+      max_sources_simple: 5
+      max_sources_medium: 10
+      max_sources_hard: 20
+
+  - id: fetch-extract
+    description: Извлечение основного текста страницы
+    tools: [trafilatura, playwright]
+    params:
+      timeout_sec: 30
+
+  - id: source-verify
+    description: Перекрёстная проверка фактов
+    params:
+      min_sources_for_claim: 2
+
+  - id: summarize
+    description: Сжатие с цитированием
+    params:
+      style: map_reduce
+      cite: true
+
+  - id: digest-builder
+    description: Сборка дайджеста/отчёта
+    telegram_command: /digest
+    params:
+      ask_format: true
+      required_sections: [tldr, key_points, sources, risks, recommendations]
+      language: ru
+
+  - id: cursor-prompt-gen
+    description: Генерация воспроизводимых промтов для Cursor
+    telegram_command: /cursor_prompt
+    params:
+      ask_single_or_iterative: true
+      include_dod: true
+      include_files_when_useful: true
+      default_stack: [python, pytest, ruff]
+
+  - id: memory-notes
+    description: Предпочтения и история через memory-mcp
+    tools: [memory-mcp]
+
+  - id: status
+    description: Диагностика LLM/MCP/Hermes
+    telegram_command: /status
