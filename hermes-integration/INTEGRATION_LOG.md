@@ -147,3 +147,13 @@ docker exec marvindeepseek-bot python -c "import urllib.request; print(urllib.re
 ```
 
 Секреты: `/opt/my_services/hermes/deploy/timeweb/.env` (`HERMES_API_KEY`, upstream key).
+
+## Переподключение MarvinDeepSeekBot → Hermes (2026-09-10)
+
+- `config.py` / `llm_service.py`: приоритет `HERMES_BASE_URL` + `HERMES_API_KEY`
+- На VPS в `/opt/my_services/marvindeepseek-bot/.env` задано:
+  - `HERMES_BASE_URL=http://hermes:8000`
+  - `HERMES_API_KEY=…` (из hermes `.env`)
+  - `HERMES_MODEL=deepseek-chat`
+- Контейнер `marvindeepseek-bot` пересобран, health=healthy
+- Проверка из контейнера: `LLM_PROVIDER=hermes`, ответ `понг` через `http://hermes:8000/v1/chat/completions`
