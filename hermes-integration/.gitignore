@@ -1,0 +1,11 @@
+# Hermes integration (local secrets & runtime)
+.env
+hermes.config.yaml
+.venv/
+.hermes/
+logs/
+run/
+bot_client.log
+*.pyc
+__pycache__/
+deploy/timeweb/.env

@@ -1,0 +1,62 @@
+services:
+  upstream:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["python", "local_upstream.py", "--host", "0.0.0.0", "--port", "8001"]
+    environment:
+      UPSTREAM_API_KEY: ${HERMES_UPSTREAM_API_KEY:-local-upstream-key}
+      LOCAL_MODEL_ID: ${HERMES_MODEL:-hermes-local-mock}
+      LOG_LEVEL: ${HERMES_LOG_LEVEL:-info}
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:8001/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  hermes:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["python", "hermes_server.py"]
+    env_file:
+      - .env
+    environment:
+      HERMES_UPSTREAM_BASE_URL: http://upstream:8001/v1
+      HERMES_HOST: 0.0.0.0
+      HERMES_PORT: 8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      upstream:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:8000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command:
+      [
+        "python",
+        "bot_client.py",
+        "Привет из docker-compose: проверь связь MarvinDeepSeekBot → Hermes",
+      ]
+    env_file:
+      - .env
+    environment:
+      HERMES_BASE_URL: http://hermes:8000
+    depends_on:
+      hermes:
+        condition: service_healthy
+    profiles:
+      - bot
+
+# Note: Docker was unavailable in the original cloud environment; compose is
+# provided for local developer machines that have Docker Engine installed.

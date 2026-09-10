@@ -1,0 +1,9 @@
+# Copy to hermes.config.yaml (gitignored) or let scripts/apply_config.py use defaults.
+host: 0.0.0.0
+port: 8000
+model: hermes-local-mock
+# Prefer HERMES_API_KEY from .env — leave empty here
+api_key: ""
+log_level: info
+upstream_base_url: http://127.0.0.1:8001/v1
+hermes_home: .hermes
