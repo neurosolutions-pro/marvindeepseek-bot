@@ -9,6 +9,7 @@ from telegram.ext import ContextTypes
 
 from handlers.common import allowed, history, reply_long
 from services import memory_service
+from services.status_service import build_status_report
 
 log = logging.getLogger("marvindeepseek.commands")
 
@@ -31,7 +32,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "📊 генерировать PDF / Word / Excel\n"
         f"🧠 память: {mem}\n\n"
         "Отправьте файл или напишите сообщение.\n"
-        "Команды: /help /file /clear /memory /remember"
+        "Команды: /help /status /file /clear /memory /remember"
     )
 
 
@@ -42,6 +43,7 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "Команды:\n"
         "/start — приветствие\n"
         "/help — эта справка\n"
+        "/status — активная LLM и подключения (Hermes, MCP)\n"
         "/file — какие файлы можно присылать\n"
         "/clear — очистить историю диалога\n"
         "/memory — показать долговременную память\n"
@@ -51,6 +53,19 @@ async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "• «сделай таблицу/excel» → файл .xlsx\n"
         "• голосовые сообщения → распознавание и ответ"
     )
+
+
+async def cmd_status(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Show active LLM provider and connected MCP/backends (incl. Hermes)."""
+    if not allowed(update.effective_user.id if update.effective_user else None):
+        await update.message.reply_text("Доступ ограничен.")
+        return
+    try:
+        report = await build_status_report()
+        await reply_long(update, report)
+    except Exception as exc:
+        log.exception("cmd_status failed")
+        await update.message.reply_text(f"Не удалось собрать статус: {exc}")
 
 
 async def cmd_file(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

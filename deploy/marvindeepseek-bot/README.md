@@ -89,7 +89,8 @@ curl http://127.0.0.1:8082/health
 
 ## Команды
 
-- `/start` `/help` `/file`
+- `/start` `/help` `/status` `/file`
+- `/status` — активная LLM и подключения (Hermes gateway, memory-mcp, DeepSeek)
 - `/clear` — очистить историю чата
 - `/memory` `/remember <факт>`
 

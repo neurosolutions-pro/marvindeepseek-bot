@@ -31,6 +31,7 @@ from handlers.commands import (
     cmd_memory,
     cmd_remember,
     cmd_start,
+    cmd_status,
 )
 from handlers.files import handle_document, handle_photo
 from handlers.text import handle_prompt_format_callback, handle_text
@@ -100,6 +101,7 @@ def main() -> None:
     app = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", cmd_start))
     app.add_handler(CommandHandler("help", cmd_help))
+    app.add_handler(CommandHandler("status", cmd_status))
     app.add_handler(CommandHandler("file", cmd_file))
     app.add_handler(CommandHandler("clear", cmd_clear))
     app.add_handler(CommandHandler("memory", cmd_memory))
