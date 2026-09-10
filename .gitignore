@@ -14,3 +14,4 @@ hermes-integration/.hermes/
 hermes-integration/logs/
 hermes-integration/run/
 hermes-integration/bot_client.log
+hermes-integration/deploy/timeweb/.env

@@ -124,3 +124,26 @@ Local Upstream :8001  (local_upstream.py)  ← или Ollama/vLLM/cloud
 - `make test` → `PASS: test_bot_client_receives_response`
 - `hermes version` → Hermes Agent v0.19.0
 - Docker в среде отсутствует → использован venv-стек; compose-файл готов для локальных машин
+
+## Timeweb deploy (лёгкий шлюз, 2026-09-10)
+
+Сервер: `neurosolutions-app1` (`72.56.18.124`, nl-1/ams-1)
+
+| Параметр | Значение |
+|----------|----------|
+| Путь | `/opt/my_services/hermes` |
+| Контейнер | `hermes` (slim, mem_limit 256m) |
+| Порт | `127.0.0.1:8000` |
+| Upstream | DeepSeek API (`HERMES_UPSTREAM_BASE_URL`) |
+| Сеть | `agent-shared` → доступно как `http://hermes:8000` |
+| Факт. RAM | ~50 MiB |
+| Compose | `deploy/timeweb/docker-compose.yml` |
+
+Проверка на VPS:
+
+```bash
+curl -sS http://127.0.0.1:8000/health
+docker exec marvindeepseek-bot python -c "import urllib.request; print(urllib.request.urlopen('http://hermes:8000/health').read().decode())"
+```
+
+Секреты: `/opt/my_services/hermes/deploy/timeweb/.env` (`HERMES_API_KEY`, upstream key).

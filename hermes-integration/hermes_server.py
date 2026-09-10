@@ -47,17 +47,20 @@ def _load_config() -> dict[str, Any]:
 
 
 CFG = _load_config()
-HOST = str(CFG.get("host") or os.getenv("HERMES_HOST", "0.0.0.0"))
-PORT = int(CFG.get("port") or os.getenv("HERMES_PORT", "8000"))
-MODEL = str(CFG.get("model") or os.getenv("HERMES_MODEL", "hermes-local-mock"))
-LOG_LEVEL = str(CFG.get("log_level") or os.getenv("HERMES_LOG_LEVEL", "info")).lower()
+# Environment variables override hermes.config.yaml (needed for production deploy).
+HOST = str(os.getenv("HERMES_HOST") or CFG.get("host") or "0.0.0.0")
+PORT = int(os.getenv("HERMES_PORT") or CFG.get("port") or 8000)
+MODEL = str(os.getenv("HERMES_MODEL") or CFG.get("model") or "hermes-local-mock")
+LOG_LEVEL = str(os.getenv("HERMES_LOG_LEVEL") or CFG.get("log_level") or "info").lower()
 API_KEY = os.getenv("HERMES_API_KEY") or str(CFG.get("api_key") or "")
 UPSTREAM_BASE_URL = (
     os.getenv("HERMES_UPSTREAM_BASE_URL")
     or str(CFG.get("upstream_base_url") or "http://127.0.0.1:8001/v1")
 ).rstrip("/")
-UPSTREAM_API_KEY = os.getenv("HERMES_UPSTREAM_API_KEY") or os.getenv(
-    "UPSTREAM_API_KEY", "local-upstream-key"
+UPSTREAM_API_KEY = (
+    os.getenv("HERMES_UPSTREAM_API_KEY")
+    or os.getenv("UPSTREAM_API_KEY")
+    or "local-upstream-key"
 )
 REQUEST_TIMEOUT = float(os.getenv("HERMES_TIMEOUT", "120"))
 
@@ -100,7 +103,7 @@ async def health() -> dict[str, Any]:
         "upstream_base_url": UPSTREAM_BASE_URL,
         "upstream_ok": upstream_ok,
         "upstream_error": upstream_error,
-        "hermes_agent": "hermes-agent==0.19.0",
+        "hermes_agent": "hermes-integration-gateway",
     }
 
 
