@@ -78,7 +78,9 @@ curl http://127.0.0.1:8082/health
 | Переменная | Описание |
 |---|---|
 | `TELEGRAM_BOT_TOKEN` | токен BotFather |
-| `DEEPSEEK_API_KEY` | ключ DeepSeek |
+| `HERMES_BASE_URL` / `HERMES_API_KEY` | OpenAI-совместимый шлюз Hermes (приоритет) |
+| `HERMES_MODEL` | модель через Hermes (по умолчанию `deepseek-chat`) |
+| `DEEPSEEK_API_KEY` | ключ DeepSeek (fallback, если Hermes не задан) |
 | `ALLOWED_USERS` | CSV Telegram user id |
 | `ADMIN_CHAT_IDS` | куда слать critical errors |
 | `MEMORY_MCP_*` / `MCP_AUTH_TOKEN` | память |

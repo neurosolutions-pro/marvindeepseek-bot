@@ -14,13 +14,41 @@ for _d in (DOWNLOADS_DIR, LOGS_DIR, FONTS_DIR):
     _d.mkdir(parents=True, exist_ok=True)
 
 TELEGRAM_BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"].strip()
-DEEPSEEK_API_KEY = os.environ["DEEPSEEK_API_KEY"].strip()
+
+# Optional Hermes OpenAI-compatible gateway (preferred when both URL and key are set).
+HERMES_BASE_URL = os.getenv("HERMES_BASE_URL", "").strip().rstrip("/")
+HERMES_API_KEY = os.getenv("HERMES_API_KEY", "").strip()
+HERMES_MODEL = os.getenv("HERMES_MODEL", "").strip()
+
+# Direct DeepSeek (fallback when Hermes is not configured).
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "").strip()
 DEEPSEEK_API_BASE = os.getenv("DEEPSEEK_API_BASE", "https://api.deepseek.com").rstrip("/")
 DEEPSEEK_API_URL = os.getenv(
     "DEEPSEEK_API_URL",
     f"{DEEPSEEK_API_BASE}/chat/completions",
 ).strip()
 DEEPSEEK_API_MODEL = os.getenv("DEEPSEEK_API_MODEL", "deepseek-chat").strip()
+
+if HERMES_BASE_URL and HERMES_API_KEY:
+    LLM_PROVIDER = "hermes"
+    LLM_API_KEY = HERMES_API_KEY
+    LLM_API_BASE = HERMES_BASE_URL
+    LLM_API_URL = os.getenv(
+        "LLM_API_URL",
+        f"{HERMES_BASE_URL}/v1/chat/completions",
+    ).strip()
+    LLM_API_MODEL = HERMES_MODEL or DEEPSEEK_API_MODEL or "deepseek-chat"
+elif DEEPSEEK_API_KEY:
+    LLM_PROVIDER = "deepseek"
+    LLM_API_KEY = DEEPSEEK_API_KEY
+    LLM_API_BASE = DEEPSEEK_API_BASE
+    LLM_API_URL = DEEPSEEK_API_URL
+    LLM_API_MODEL = DEEPSEEK_API_MODEL
+else:
+    raise RuntimeError(
+        "Configure Hermes (HERMES_BASE_URL + HERMES_API_KEY) "
+        "or DeepSeek (DEEPSEEK_API_KEY)"
+    )
 
 PORT = int(os.getenv("PORT", "8082"))
 MAX_HISTORY = int(os.getenv("MAX_HISTORY", "12"))

@@ -1,4 +1,4 @@
-"""DeepSeek LLM client."""
+"""LLM client (Hermes gateway preferred, DeepSeek fallback)."""
 
 from __future__ import annotations
 
@@ -7,26 +7,29 @@ from typing import Any
 
 import httpx
 
-from config import DEEPSEEK_API_KEY, DEEPSEEK_API_MODEL, DEEPSEEK_API_URL, SYSTEM_PROMPT
+from config import LLM_API_KEY, LLM_API_MODEL, LLM_API_URL, LLM_PROVIDER, SYSTEM_PROMPT
 
 log = logging.getLogger("marvindeepseek.llm")
 
 
 class LLMService:
-    """Async DeepSeek chat completions client."""
+    """Async OpenAI-compatible chat completions client."""
 
     def __init__(
         self,
         *,
-        api_url: str = DEEPSEEK_API_URL,
-        api_key: str = DEEPSEEK_API_KEY,
-        model: str = DEEPSEEK_API_MODEL,
+        api_url: str = LLM_API_URL,
+        api_key: str = LLM_API_KEY,
+        model: str = LLM_API_MODEL,
         system_prompt: str = SYSTEM_PROMPT,
+        provider: str = LLM_PROVIDER,
     ) -> None:
         self.api_url = api_url
         self.api_key = api_key
         self.model = model
         self.system_prompt = system_prompt
+        self.provider = provider
+        log.info("LLM provider=%s model=%s url=%s", self.provider, self.model, self.api_url)
 
     async def generate_response(
         self,
@@ -60,6 +63,13 @@ class LLMService:
                 },
                 json=payload,
             )
+            if resp.status_code >= 400:
+                log.error(
+                    "LLM error provider=%s status=%s body=%s",
+                    self.provider,
+                    resp.status_code,
+                    resp.text[:500],
+                )
             resp.raise_for_status()
             data = resp.json()
         return data["choices"][0]["message"]["content"].strip()
