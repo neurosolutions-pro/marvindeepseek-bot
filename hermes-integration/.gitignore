@@ -1,0 +1,10 @@
+# Hermes integration (local secrets & runtime)
+hermes-integration/.env
+hermes-integration/hermes.config.yaml
+hermes-integration/.venv/
+hermes-integration/.hermes/
+hermes-integration/logs/
+hermes-integration/run/
+hermes-integration/bot_client.log
+hermes-integration/*.pyc
+hermes-integration/__pycache__/

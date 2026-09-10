@@ -5,3 +5,12 @@ deploy/marvindeepseek-bot/logs/*
 deploy/marvindeepseek-bot/.venv/
 **/__pycache__/
 scripts/__pycache__/
+
+# Hermes integration secrets & local runtime
+hermes-integration/.env
+hermes-integration/hermes.config.yaml
+hermes-integration/.venv/
+hermes-integration/.hermes/
+hermes-integration/logs/
+hermes-integration/run/
+hermes-integration/bot_client.log
